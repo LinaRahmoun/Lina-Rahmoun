@@ -1,0 +1,103 @@
+# Lina-Rahmoun
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
+
+public class ShapeDrawer extends JFrame {
+    private JPanel drawingPanel;
+    private ButtonGroup shapeGroup;
+    private JRadioButton circleRadioButton, rectangleRadioButton, ellipseRadioButton;
+    private JCheckBox fillCheckBox;
+    private JButton drawButton;
+
+    public ShapeDrawer() {
+        setTitle("Shape Drawer");
+        setSize(400, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        drawingPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawShape(g);
+            }
+        };
+        drawingPanel.setPreferredSize(new Dimension(300, 300));
+
+        shapeGroup = new ButtonGroup();
+        circleRadioButton = new JRadioButton("Circle");
+        rectangleRadioButton = new JRadioButton("Rectangle");
+        ellipseRadioButton = new JRadioButton("Ellipse");
+
+        shapeGroup.add(circleRadioButton);
+        shapeGroup.add(rectangleRadioButton);
+        shapeGroup.add(ellipseRadioButton);
+
+        circleRadioButton.setSelected(true);
+
+        fillCheckBox = new JCheckBox("Fill with Random Color");
+
+        drawButton = new JButton("Draw");
+        drawButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawingPanel.repaint();
+            }
+        });
+
+        setLayout(new FlowLayout());
+        add(drawingPanel);
+        add(circleRadioButton);
+        add(rectangleRadioButton);
+        add(ellipseRadioButton);
+        add(fillCheckBox);
+        add(drawButton);
+    }
+
+    private void drawShape(Graphics g) {
+        String selectedShape = circleRadioButton.isSelected() ? "Circle" :
+                rectangleRadioButton.isSelected() ? "Rectangle" : "Ellipse";
+
+        boolean fill = fillCheckBox.isSelected();
+        Color fillColor = getRandomColor();
+
+        int width = drawingPanel.getWidth();
+        int height = drawingPanel.getHeight();
+        int x = width / 4;
+        int y = height / 4;
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        if (selectedShape.equals("Circle")) {
+            g2d.setColor(fill ? fillColor : Color.WHITE);
+            g2d.fillOval(x, y, width / 2, height / 2);
+        } else if (selectedShape.equals("Rectangle")) {
+            g2d.setColor(fill ? fillColor : Color.WHITE);
+            g2d.fillRect(x, y, width / 2, height / 2);
+        } else if (selectedShape.equals("Ellipse")) {
+            g2d.setColor(fill ? fillColor : Color.WHITE);
+            g2d.fillOval(x, y, width / 2, height / 4);
+        }
+    }
+
+    private Color getRandomColor() {
+        Random rand = new Random();
+        int r = rand.nextInt(256);
+        int g = rand.nextInt(256);
+        int b = rand.nextInt(256);
+        return new Color(r, g, b);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ShapeDrawer shapeDrawer = new ShapeDrawer();
+                shapeDrawer.setVisible(true);
+            }
+        });
+    }
+}
